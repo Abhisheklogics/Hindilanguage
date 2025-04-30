@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <title>हिंदी गणित कंपाइलर</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism.min.css" rel="stylesheet"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #121212; /* Dark background for better feel */
+      color: #fff;
+      padding: 10px;
+    
+      height: 100vh;
+    
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row; /* Use row for side-by-side layout */
+      width: 100%;
+      max-width: 1400px;
+      height: 80vh; /* Full height container */
+      gap: 30px;
+    }
+
+    .editor, .output {
+      flex: 1;
+      padding: 30px;
+      border-radius: 10px;
+    
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      font-family: 'Poppins', sans-serif;
+      font-size: 18px;
+      background-color: rgba(255, 255, 255, 0.1);
+      overflow: auto;
+    }
+
+    .editor {
+      background: #1f1f1f;
+    }
+
+    .output {
+      background: #333;
+      color: #f7b233;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #e29f22;
+    }
+
+   
+    textarea {
+      width: 100%;
+      height: 500px;
+      font-size: 18px;
+      padding: 20px;
+      border: 2px solid #fff;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      resize: none;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      display: block;
+    }
+
+    textarea:focus {
+      border-color: #63a69f;
+      background: rgba(255, 255, 255, 0.2);
+      outline: none;
+    }
+
+    button {
+      padding: 15px 40px;
+      font-size: 18px;
+      background-color: #ffbc2b;
+      border: none;
+      border-radius: 30px;
+      color: #f8f2f2;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      margin-top:-60px;
+      position: absolute;
+      margin-left: 640px;
+    }
+
+    button:hover {
+      background-color: #c09507;
+      transform: scale(1.05);
+    }
+
+    #output {
+      margin-top: 10px;
+      background: #333;
+      color: #f1ddbe;
+      padding: 15px;
+      white-space: pre-wrap;
+      min-height: 50px;
+      border-radius: 10px;
+     
+      
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+    }
+
+    #output span {
+      display: block;
+      margin-top: 10px;
+    }
+
+    .code-container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      color: #fff;
+      width: 100%;
+      overflow: auto;
+      margin-bottom: 20px;
+    }
+
+    pre {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    pre code {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 28px;
+      }
+
+     
+
+      textarea {
+        height: 200px;
+      }
+
+      button {
+        font-size: 16px;
+      }
+
+      .container {
+        flex-direction: column;
+      }
+
+      .editor,
+      .output {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div>
+    <h1 style="margin-left: 140px;">हिंदी कंपाइलर </h1>
+   
+ <button id="runBtn"> चलाएं</button>
+    <div class="container">
+      <div class="editor">
+        <textarea id="code">संख्या = 10;
+गुणा = 5 * 2;
+प्रदर्शित(संख्या + गुणा);</textarea>
+        <br>
+       
+      </div>
+
+      <div class="output">
+        <h3>आउटपुट:</h3>
+        <div id="output"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+  <script>
+    function runHindiMathCode(code) {
+      const outputDiv = document.getElementById("output");
+      outputDiv.innerText = "";
+      const lines = code.split("\n");
+
+      const env = {}; 
+
+      lines.forEach((line, index) => {
+        line = line.trim();
+        if (line === "") return;
+
+        try {
+          
+          if (line.startsWith("प्रदर्शित(") && line.endsWith(");")) {
+            const expr = line.slice(10, -2).trim();
+            const jsExpr = replaceHindiVars(expr, env);
+            const result = Function('"use strict";return (' + jsExpr + ')')();
+            outputDiv.innerText += result + "\n";
+
+          
+          } else if (line.includes("=")) {
+            const [varNameRaw, exprRaw] = line.split("=");
+            const varName = varNameRaw.trim();
+            const expr = exprRaw.replace(/;$/, "").trim();
+
+            if (!/^[\u0900-\u097F]+$/.test(varName)) {
+              throw new Error(`लाइन ${index + 1}: वेरिएबल का नाम केवल हिंदी अक्षरों में होना चाहिए`);
+            }
+
+            const jsExpr = replaceHindiVars(expr, env);
+            const value = Function('"use strict";return (' + jsExpr + ')')();
+            env[varName] = value;
+
+          } else {
+            throw new Error(`लाइन ${index + 1}: अमान्य सिंटैक्स`);
+          }
+        } catch (err) {
+          outputDiv.innerText += "  " + err.message + "\n";
+        }
+      });
+    }
+
+    
+    function replaceHindiVars(expr, env) {
+      return expr.replace(/[\u0900-\u097F]+/g, word => {
+        if (!isNaN(word)) return word; 
+        if (env.hasOwnProperty(word)) return env[word];
+        throw new Error(`अज्ञात वेरिएबल '${word}'`);
+      });
+    }
+
+    document.getElementById("runBtn").addEventListener("click", () => {
+      const code = document.getElementById("code").value;
+      runHindiMathCode(code);
+    });
+
+    
+    Prism.highlightAll();
+  </script>
+</body>
+</html>
