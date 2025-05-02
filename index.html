@@ -6,157 +6,171 @@
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
+      --primary: #008CBA;
+      --editor-bg: #1e1e2f;
+      --editor-color: #dcdcdc;
+      --output-bg: #212121;
+      --output-color: #ffae00;
+      --radius: 12px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
 
-  --primary: #008CBA; 
-  --editor-bg: #1e1e2f;
-  --editor-color: #dcdcdc;
-  --output-bg: #212121; 
-  --output-color: #ffae00; 
-  --radius: 12px;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.2); 
-}
+    * {
+      box-sizing: border-box;
+    }
 
-* {
-  box-sizing: border-box;
-}
+    html, body {
+      height: 100%;
+      font-family: 'Fira Code', monospace;
+      background-color: #000000;
+      margin: 0;
+      padding: 0;
+      color: #000000;
+    }
 
-html, body {
-  height: 100%;
-  font-family: 'Fira Code', monospace;
-  background: var(--bg-gradient);
-  color: #000000;
-  background-color: #000000;
-  margin: 0;
-  padding: 0;
-}
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100%;
+      padding: 20px;
+    }
 
-.container {
-  display: flex;
-  height: 100vh;
-  width: 100%;
-  padding: 20px;
-}
+    .editor, .output {
+      flex: 1;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+    }
 
-.editor, .output {
-  flex: 1;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
- 
-  
-}
+    .editor {
+      background: var(--editor-bg);
+    }
 
-.editor {
-  background: var(--editor-bg);
-}
+    .output {
+      background: var(--output-bg);
+     
+    }
 
-.output {
-  background: var(--output-bg);
-  border-left: 3px solid #464545;
-  
-}
-#output{
-  font-weight: 70px;
- 
-}
-h2 {
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  color: var(--primary);
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+    #output {
+      font-weight: 70px;
+    }
 
-textarea {
-  width: 100%;
-  flex: 1;
-  background: var(--editor-bg);
-  color: var(--editor-color);
-  font-size: 16px;
-  border: none;
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  resize: none;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-}
+    h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-button {
-  background: var(--primary);
-  color: white;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  margin-top: 1.5rem;
-  transition: background 0.3s ease, transform 0.2s ease;
-  align-self: center;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    textarea {
+      width: 100%;
+      flex: 1;
+      background: var(--editor-bg);
+      color: var(--editor-color);
+      font-size: 16px;
+      border: none;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      resize: none;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+    }
 
-}
+    button {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: background 0.3s ease, transform 0.2s ease;
+      align-self: center;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
 
-button:hover {
-  background: #005f7f;
-  transform: translateY(-2px); /* Subtle lift effect */
-}
+    button:hover {
+      background: #005f7f;
+      transform: translateY(-2px); /* Subtle lift effect */
+    }
 
-h3 {
-  color: #f1f1f1;
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-}
-#runBtn{
-  margin-top: 10px;
-  margin-left: 610px;
-}
-pre {
-  flex: 1;
-  background: var(--output-bg);
-  color: var(--output-color);
-  padding: 1.5rem;
-  border-radius: var(--radius);
-  font-size: 16px;
-  white-space: pre-wrap;
-  overflow-y: auto;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-  font-family: 'Fira Code', monospace;
-}
+    h3 {
+      color: #f1f1f1;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
 
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-  }
+    #runBtn {
+      margin-top: 10px;
+      align-self: center;
+    }
 
-  .editor, .output {
-    height: 50%;
-    border-right: none;
-  }
-  
-  h2 {
-    font-size: 1.5rem;
-  }
-  
-  button {
-    font-size: 1rem;
-  }
-}
+    pre {
+      flex: 1;
+      background: var(--output-bg);
+      color: var(--output-color);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      font-size: 16px;
+      white-space: pre-wrap;
+      overflow-y: auto;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+      font-family: 'Fira Code', monospace;
+    }
 
+    @media (min-width: 768px) {
+      .container {
+        flex-direction: row;
+      }
+
+      .editor, .output {
+        height: auto;
+        flex: 1;
+        border-right: none;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+      }
+
+      button {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .editor, .output {
+        height: auto;
+        width: 100%;
+        border-right: none;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      button {
+        font-size: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
   <button id="runBtn">▶️ Run Code</button>
   <div class="container">
-    
     <div class="editor">
-   
       <h2>Hindi Code Interpreter</h2>
-      
       <textarea id="code">sankhya = 10;
 guna = 5 * 2;
 pradarshit(sankhya + guna);</textarea>
- 
     </div>
     <div class="output">
       <h3>Output</h3>
@@ -185,6 +199,7 @@ Hinglish {
   identifier  = letter (alnum)*
   number      = digit+
 }`;
+
     const grammar = ohm.grammar(grammarText);
     const semantics = grammar.createSemantics();
     const env = {};
@@ -232,4 +247,4 @@ Hinglish {
     });
   </script>
 </body>
-</
+</html>
