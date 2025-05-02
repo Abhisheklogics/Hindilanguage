@@ -1,227 +1,223 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>हिंदी  कंपाइलर</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism.min.css" rel="stylesheet"/>
+  <meta charset="UTF-8" />
+  <title>Hindi Interpreter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    :root {
+
+  --primary: #008CBA; 
+  --editor-bg: #1e1e2f;
+  --editor-color: #dcdcdc;
+  --output-bg: #212121; 
+  --output-color: #ffae00; 
+  --radius: 12px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.2); 
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Fira Code', monospace;
+  background: var(--bg-gradient);
+  color: #000000;
+  background-color: #000000;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  padding: 20px;
+}
+
+.editor, .output {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+ 
   
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #121212;
-      color: #fff;
-      padding: 20px;
-      min-height: 100vh;
-    }
+}
+
+.editor {
+  background: var(--editor-bg);
+}
+
+.output {
+  background: var(--output-bg);
+  border-left: 3px solid #464545;
+}
+
+h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+textarea {
+  width: 100%;
+  flex: 1;
+  background: var(--editor-bg);
+  color: var(--editor-color);
+  font-size: 16px;
+  border: none;
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  resize: none;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  background: var(--primary);
+  color: white;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+  align-self: center;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  background: #005f7f;
+  transform: translateY(-2px); /* Subtle lift effect */
+}
+
+h3 {
+  color: #f1f1f1;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+pre {
+  flex: 1;
+  background: var(--output-bg);
+  color: var(--output-color);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  font-size: 16px;
+  white-space: pre-wrap;
+  overflow-y: auto;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  font-family: 'Fira Code', monospace;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .editor, .output {
+    height: 50%;
+    border-right: none;
+  }
   
-    h1 {
-      font-size: 32px;
-      margin-bottom: 20px;
-      font-weight: 600;
-      color: #e29f22;
-      text-align: center;
-    }
+  h2 {
+    font-size: 1.5rem;
+  }
   
-    .top-bar {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-  
-    button {
-      padding: 10px 30px;
-      font-size: 18px;
-      background-color: #ffbc2b;
-      border: none;
-      border-radius: 30px;
-      color: #fff;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      margin-bottom: 30px;
-      
-    
-    }
-  
-    button:hover {
-      background-color: #c09507;
-      transform: scale(1.05);
-    }
-  
-    .container {
-      display: flex;
-      flex-direction: row;
-      gap: 20px;
-      width: 100%;
-      max-width: 1400px;
-      margin: 0 auto;
-      flex-wrap: wrap;
-    }
-  
-    .editor, .output {
-      flex: 1 1 500px;
-      min-height: 300px;
-      padding: 20px;
-      border-radius: 10px;
-      font-size: 18px;
-      background-color: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      overflow: auto;
-    }
-  
-    .editor {
-      background-color: #1f1f1f;
-    }
-  
-    .output {
-      background-color: #333;
-      color: #f7b233;
-    }
-  
-    textarea {
-      width: 100%;
-      height: 300px;
-      font-size: 18px;
-      padding: 15px;
-      border: 2px solid #fff;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      resize: none;
-      font-family: 'Poppins', sans-serif;
-      transition: all 0.3s ease;
-    }
-  
-    textarea:focus {
-      border-color: #63a69f;
-      background: rgba(255, 255, 255, 0.2);
-      outline: none;
-    }
-  
-    #output {
-      margin-top: 10px;
-      white-space: pre-wrap;
-      min-height: 50px;
-      border-radius: 10px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 16px;
-    }
-  
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        padding: 0 10px;
-      }
-  
-      h1 {
-        font-size: 24px;
-      }
-  
-      button {
-        font-size: 16px;
-        padding: 10px 25px;
-      }
-  
-      textarea {
-        height: 250px;
-      }
-  
-      .editor, .output {
-        flex: 1 1 100%;
-      }
-    }
+  button {
+    font-size: 1rem;
+  }
+}
+
   </style>
-  
 </head>
 <body>
-
-  <div>
-    <h1 style="margin-left: 140px;">हिंदी कंपाइलर </h1>
-   
- <button id="runBtn"> चलाएं</button>
- 
-    <div class="container">
-      <div class="editor">
-        <textarea id="code">संख्या = 10;
-गुणा = 5 * 2;
-प्रदर्शित(संख्या + गुणा);</textarea>
-        <br>
-       
-      </div>
-
-      <div class="output">
-        <h3>आउटपुट:</h3>
-        <div id="output"></div>
-      </div>
+  <div class="container">
+    <div class="editor">
+      <h2>Hindi Code Interpreter</h2>
+      <textarea id="code">sankhya = 10;
+guna = 5 * 2;
+pradarshit(sankhya + guna);</textarea>
+      <button id="runBtn">▶️ Run Code</button>
+    </div>
+    <div class="output">
+      <h3>Output</h3>
+      <pre id="output"></pre>
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+  <script src="https://unpkg.com/ohm-js@16.2.0/dist/ohm.min.js"></script>
   <script>
-    function runHindiMathCode(code) {
-      const outputDiv = document.getElementById("output");
-      outputDiv.innerText = "";
-      const lines = code.split("\n");
+    const grammarText = `
+Hinglish {
+  Program     = Statement*
+  Statement   = Assignment | Print
+  Assignment  = identifier "=" Exp ";"
+  Print       = "pradarshit" "(" Exp ")" ";"
+  Exp         = AddExp
+  AddExp      = AddExp "+" MulExp  -- plus
+              | AddExp "-" MulExp  -- minus
+              | MulExp
+  MulExp      = MulExp "*" PriExp  -- times
+              | MulExp "/" PriExp  -- divide
+              | PriExp
+  PriExp      = number             -- number
+              | identifier         -- ident
+              | "(" Exp ")"        -- parens
+  identifier  = letter (alnum)*
+  number      = digit+
+}`;
+    const grammar = ohm.grammar(grammarText);
+    const semantics = grammar.createSemantics();
+    const env = {};
 
-      const env = {}; 
-
-      lines.forEach((line, index) => {
-        line = line.trim();
-        if (line === "") return;
-
-        try {
-          
-          if (line.startsWith("प्रदर्शित(") && line.endsWith(");")) {
-            const expr = line.slice(10, -2).trim();
-            const jsExpr = replaceHindiVars(expr, env);
-            const result = Function('"use strict";return (' + jsExpr + ')')();
-            outputDiv.innerText += result + "\n";
-
-          
-          } else if (line.includes("=")) {
-            const [varNameRaw, exprRaw] = line.split("=");
-            const varName = varNameRaw.trim();
-            const expr = exprRaw.replace(/;$/, "").trim();
-
-            if (!/^[\u0900-\u097F]+$/.test(varName)) {
-              throw new Error(`लाइन ${index + 1}: वेरिएबल का नाम केवल हिंदी अक्षरों में होना चाहिए`);
-            }
-
-            const jsExpr = replaceHindiVars(expr, env);
-            const value = Function('"use strict";return (' + jsExpr + ')')();
-            env[varName] = value;
-
-          } else {
-            throw new Error(`लाइन ${index + 1}: अमान्य सिंटैक्स`);
-          }
-        } catch (err) {
-          outputDiv.innerText += "  " + err.message + "\n";
-        }
-      });
-    }
-
-    
-    function replaceHindiVars(expr, env) {
-      return expr.replace(/[\u0900-\u097F]+/g, word => {
-        if (!isNaN(word)) return word; 
-        if (env.hasOwnProperty(word)) return env[word];
-        throw new Error(`अज्ञात वेरिएबल '${word}'`);
-      });
-    }
+    semantics.addOperation("eval", {
+      Program(statements) {
+        statements.children.forEach(s => s.eval());
+      },
+      Statement(s) {
+        s.eval();
+      },
+      Assignment(id, _, expr, __) {
+        const name = id.eval();
+        env[name] = expr.eval();
+      },
+      Print(_1, _2, expr, _3, _4) {
+        const out = expr.eval();
+        document.getElementById("output").textContent += out + "\n";
+      },
+      AddExp_plus(a, _, b) { return a.eval() + b.eval(); },
+      AddExp_minus(a, _, b) { return a.eval() - b.eval(); },
+      MulExp_times(a, _, b) { return a.eval() * b.eval(); },
+      MulExp_divide(a, _, b) { return a.eval() / b.eval(); },
+      PriExp_number(n) { return parseInt(n.sourceString, 10); },
+      PriExp_ident(id) {
+        const name = id.eval();
+        return env[name];
+      },
+      PriExp_parens(_1, expr, _2) { return expr.eval(); },
+      identifier(_first, _rest) {
+        return this.sourceString;
+      }
+    });
 
     document.getElementById("runBtn").addEventListener("click", () => {
       const code = document.getElementById("code").value;
-      runHindiMathCode(code);
+      document.getElementById("output").textContent = "";
+      Object.keys(env).forEach(k => delete env[k]);
+      const match = grammar.match(code);
+      if (match.failed()) {
+        document.getElementById("output").textContent = "❌ Error: " + match.message;
+        return;
+      }
+      semantics(match).eval();
     });
-
-    
-    Prism.highlightAll();
   </script>
 </body>
-</html>
+</
