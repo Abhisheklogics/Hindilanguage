@@ -161,7 +161,15 @@
         font-size: 1rem;
       }
     }
+    
   </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/lib/codemirror.css">
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/lib/codemirror.js"></script>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/theme/monokai.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/mode/javascript/javascript.js"></script>
+  
 </head>
 <body>
   <button id="runBtn">▶️ Run Code</button>
@@ -233,18 +241,26 @@ Hinglish {
         return this.sourceString;
       }
     });
+ const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+    lineNumbers: true,
+    mode: "highlish",
+    theme: "monokai",
 
-    document.getElementById("runBtn").addEventListener("click", () => {
-      const code = document.getElementById("code").value;
-      document.getElementById("output").textContent = "";
-      Object.keys(env).forEach(k => delete env[k]);
-      const match = grammar.match(code);
-      if (match.failed()) {
-        document.getElementById("output").textContent = "❌ Error: " + match.message;
-        return;
-      }
-      semantics(match).eval();
-    });
+    matchBrackets: true
+  });
+
+  document.getElementById("runBtn").addEventListener("click", () => {
+    const code = editor.getValue();
+    document.getElementById("output").textContent = "";
+    Object.keys(env).forEach(k => delete env[k]);
+    const match = grammar.match(code);
+    if (match.failed()) {
+      document.getElementById("output").textContent = "❌ Error: " + match.message;
+      return;
+    }
+    semantics(match).eval();
+  });
+
   </script>
 </body>
 </html>
