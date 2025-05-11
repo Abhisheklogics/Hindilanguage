@@ -2,135 +2,111 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Hindi Interpreter</title>
+  <title>Hindi Code Interpreter</title>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/theme/material-darker.min.css">
   <style>
     :root {
-      --primary: #008CBA;
+      --primary: #00bcd4;
+      --secondary: #03a9f4;
       --editor-bg: #1e1e2f;
-      --editor-color: #dcdcdc;
-      --output-bg: #212121;
-      --output-color: #ffae00;
+      --output-bg: #121212;
       --radius: 12px;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     }
 
     * {
       box-sizing: border-box;
     }
 
-    html, body {
-      height: 100%;
-      font-family: 'Fira Code', monospace;
-      background-color: #000000;
+    body, html {
       margin: 0;
       padding: 0;
+      height: 100%;
+      font-family: 'Fira Code', monospace;
+      background-color: #0d0d0d;
       color: #ffffff;
+      overflow: hidden;
+    }
+
+    header {
+      background: #111;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 255, 255, 0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      color: var(--primary);
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    #runBtn {
+      background: var(--primary);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s ease;
+      box-shadow: 0 0 10px var(--primary);
+    }
+
+    #runBtn:hover {
+      background: var(--secondary);
+      transform: translateY(-1px);
     }
 
     .container {
       display: flex;
-      flex-direction: column;
-      height: 100vh;
-      width: 100%;
+      height: calc(100% - 60px);
+      gap: 15px;
       padding: 20px;
     }
 
     .editor, .output {
       flex: 1;
-      padding: 10px;
       display: flex;
       flex-direction: column;
-    }
-
-    .editor {
       background: var(--editor-bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.05);
     }
 
     .output {
       background: var(--output-bg);
     }
 
-    h2 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
-      color: var(--primary);
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    textarea {
-      width: 100%;
-      flex: 1;
-      background: var(--editor-bg);
-      color: var(--editor-color);
-      font-size: 16px;
-      border: none;
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      resize: none;
-      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-    }
-
-    button {
-      background: var(--primary);
-      color: white;
-      padding: 1rem 2rem;
-      font-size: 1.1rem;
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      margin-top: 1.5rem;
-      transition: background 0.3s ease, transform 0.2s ease;
-      align-self: center;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    button:hover {
-      background: #005f7f;
-      transform: translateY(-2px);
-    }
-
     h3 {
-      color: #f1f1f1;
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-    }
-
-    #runBtn {
-      margin-top: 10px;
-      align-self: center;
-    }
-
-    .cm-keyword-hindi {
-      color: rgb(104, 155, 252) !important;
-      font-weight: bold;
-    }
-
-    /* This will make the rest of the code white */
-    .cm-variable, .cm-number, .cm-string, .cm-operator, .cm-comment, .cm-atom {
-      color: white !important;
+      margin: 0;
+      padding: 10px 15px;
+      font-size: 1.1rem;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--primary);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     pre {
       flex: 1;
-      background: var(--output-bg);
-      color: var(--output-color);
-      padding: 1.5rem;
-      border-radius: var(--radius);
+      padding: 20px;
+      margin: 0;
       font-size: 16px;
-      white-space: pre-wrap;
+      color: #ffdd57;
       overflow-y: auto;
-      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-      font-family: 'Fira Code', monospace;
+      white-space: pre-wrap;
+      animation: fadeIn 0.5s ease;
     }
 
-    @media (min-width: 768px) {
-      .container {
-        flex-direction: row;
-      }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @media (max-width: 768px) {
@@ -138,22 +114,34 @@
         flex-direction: column;
       }
     }
-  </style>
 
-  <!-- CodeMirror core and required addons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/mode/simple.min.js"></script>
-  <script src="https://unpkg.com/ohm-js@16.2.0/dist/ohm.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/theme/monokai.min.css">
+    .CodeMirror {
+      height: 100%;
+      font-size: 15px;
+      background-color: var(--editor-bg) !important;
+    }
+
+    .cm-keyword-hindi {
+      color: #00e5ff !important;
+      font-weight: bold;
+    }
+
+    .cm-variable, .cm-number, .cm-string, .cm-operator, .cm-comment, .cm-atom {
+      color: white !important;
+    }
+  </style>
 </head>
 <body>
-  <button id="runBtn">▶️ Run Code</button>
+
+  <header>
+    <h1>Hindi Code Interpreter</h1>
+    <button id="runBtn">▶ Run Code</button>
+  </header>
+
   <div class="container">
     <div class="editor">
-      <h2>Hindi Code Interpreter</h2>
       <textarea id="code">number umar = 21;
-shabd naam = "Abhishek kumar";
+shabd naam = "Abhishek Kumar";
 
 pradarshit(umar);
 pradarshit(naam);</textarea>
@@ -163,6 +151,11 @@ pradarshit(naam);</textarea>
       <pre id="output"></pre>
     </div>
   </div>
+
+  <!-- CodeMirror & Ohm -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/mode/simple.min.js"></script>
+  <script src="https://unpkg.com/ohm-js@16.2.0/dist/ohm.min.js"></script>
 
   <script>
     const grammarText = `
@@ -225,28 +218,20 @@ pradarshit(naam);</textarea>
       PriExp_string(str) {
         return str.sourceString.slice(1, -1);
       },
-      PriExp_true(_) {
-        return true;
-      },
-      PriExp_false(_) {
-        return false;
-      },
-      PriExp_null(_) {
-        return null;
-      },
+      PriExp_true(_) { return true; },
+      PriExp_false(_) { return false; },
+      PriExp_null(_) { return null; },
       identifier(_first, _rest) {
         return this.sourceString;
       }
     });
 
-    // Custom keywords
     const hindiKeywords = ["number", "shabd", "haanYaNaa", "khaali", "soochi", "cheez", "pradarshit", "true", "false", "null"];
 
     CodeMirror.defineSimpleMode("hindiMode", {
       start: [
         {regex: new RegExp("\\b(" + hindiKeywords.join("|") + ")\\b"), token: "keyword-hindi"},
-        
-        {regex: /\b([a-zA-Z_][a-zA-Z0-9_]*)\b/, token: "variable"},  // Tokenize variables
+        {regex: /\b([a-zA-Z_][a-zA-Z0-9_]*)\b/, token: "variable"},
         {regex: /"(?:[^\\"]|\\.)*"?/, token: "string"},
         {regex: /\d+/, token: "number"},
         {regex: /\/\/.*/, token: "comment"},
@@ -256,9 +241,9 @@ pradarshit(naam);</textarea>
 
     const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
       mode: "hindiMode",
-      theme: 'monokai',
+      theme: "material-darker",
       lineNumbers: true,
-      tabSize: 2,
+      tabSize: 2
     });
 
     document.getElementById("runBtn").addEventListener("click", () => {
@@ -269,10 +254,10 @@ pradarshit(naam);</textarea>
         if (matchResult.succeeded()) {
           semantics(matchResult).eval();
         } else {
-          document.getElementById("output").textContent = " Syntax Error!";
+          document.getElementById("output").textContent = "❌ Syntax Error!";
         }
       } catch (err) {
-        document.getElementById("output").textContent = " Runtime Error: " + err.message;
+        document.getElementById("output").textContent = "⚠️ Runtime Error: " + err.message;
       }
     });
   </script>
