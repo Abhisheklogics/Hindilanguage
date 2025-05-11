@@ -109,8 +109,9 @@
       font-weight: bold;
     }
 
-    .cm-variable {
-      color: #a0e0a5 !important; /* Greenish color for variables */
+    /* This will make the rest of the code white */
+    .cm-variable, .cm-number, .cm-string, .cm-operator, .cm-comment, .cm-atom {
+      color: white !important;
     }
 
     pre {
@@ -144,8 +145,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/mode/simple.min.js"></script>
   <script src="https://unpkg.com/ohm-js@16.2.0/dist/ohm.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/dracula.min.css">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/theme/monokai.min.css">
 </head>
 <body>
   <button id="runBtn">▶️ Run Code</button>
@@ -246,6 +246,7 @@ pradarshit(naam);</textarea>
     CodeMirror.defineSimpleMode("hindiMode", {
       start: [
         {regex: new RegExp("\\b(" + hindiKeywords.join("|") + ")\\b"), token: "keyword-hindi"},
+        
         {regex: /\b([a-zA-Z_][a-zA-Z0-9_]*)\b/, token: "variable"},  // Tokenize variables
         {regex: /"(?:[^\\"]|\\.)*"?/, token: "string"},
         {regex: /\d+/, token: "number"},
@@ -256,7 +257,7 @@ pradarshit(naam);</textarea>
 
     const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
       mode: "hindiMode",
-      theme: "dracula",
+      theme: 'monokai',
       lineNumbers: true,
       tabSize: 2,
     });
@@ -269,10 +270,10 @@ pradarshit(naam);</textarea>
         if (matchResult.succeeded()) {
           semantics(matchResult).eval();
         } else {
-          document.getElementById("output").textContent = "🛑 Syntax Error!";
+          document.getElementById("output").textContent = " Syntax Error!";
         }
       } catch (err) {
-        document.getElementById("output").textContent = "⚠️ Runtime Error: " + err.message;
+        document.getElementById("output").textContent = " Runtime Error: " + err.message;
       }
     });
   </script>
