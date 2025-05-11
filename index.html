@@ -25,7 +25,7 @@
       background-color: #000000;
       margin: 0;
       padding: 0;
-      color: #000000;
+      color: #ffffff;
     }
 
     .container {
@@ -49,11 +49,6 @@
 
     .output {
       background: var(--output-bg);
-     
-    }
-
-    #output {
-      font-weight: 70px;
     }
 
     h2 {
@@ -95,7 +90,7 @@
 
     button:hover {
       background: #005f7f;
-      transform: translateY(-2px); /* Subtle lift effect */
+      transform: translateY(-2px);
     }
 
     h3 {
@@ -107,6 +102,15 @@
     #runBtn {
       margin-top: 10px;
       align-self: center;
+    }
+
+    .cm-keyword-hindi {
+      color: rgb(104, 155, 252) !important;
+      font-weight: bold;
+    }
+
+    .cm-variable {
+      color: #a0e0a5 !important; /* Greenish color for variables */
     }
 
     pre {
@@ -126,59 +130,34 @@
       .container {
         flex-direction: row;
       }
-
-      .editor, .output {
-        height: auto;
-        flex: 1;
-        border-right: none;
-      }
-
-      h2 {
-        font-size: 1.8rem;
-      }
-
-      button {
-        font-size: 1.2rem;
-      }
     }
 
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
       }
-
-      .editor, .output {
-        height: auto;
-        width: 100%;
-        border-right: none;
-      }
-
-      h2 {
-        font-size: 1.5rem;
-      }
-
-      button {
-        font-size: 1rem;
-      }
     }
-    
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/lib/codemirror.css">
-  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/lib/codemirror.js"></script>
-  
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/theme/monokai.css">
 
-  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/mode/javascript/javascript.js"></script>
-  
+  <!-- CodeMirror core and required addons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/mode/simple.min.js"></script>
+  <script src="https://unpkg.com/ohm-js@16.2.0/dist/ohm.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/dracula.min.css">
+
 </head>
 <body>
   <button id="runBtn">▶️ Run Code</button>
   <div class="container">
     <div class="editor">
       <h2>Hindi Code Interpreter</h2>
-      <textarea id="code">sankhya = 10;
-guna = 5 * 2;
-pradarshit(sankhya + guna);</textarea>
+      <textarea id="code">number umar = 25;
+shabd naam = "Abhisekh";
+haanYaNaa studentHai = true;
+khaali kuchNahi = null;
+pradarshit(umar);
+pradarshit(naam);</textarea>
     </div>
     <div class="output">
       <h3>Output</h3>
@@ -186,27 +165,33 @@ pradarshit(sankhya + guna);</textarea>
     </div>
   </div>
 
-  <script src="https://unpkg.com/ohm-js@16.2.0/dist/ohm.min.js"></script>
   <script>
     const grammarText = `
-Hinglish {
-  Program     = Statement*
-  Statement   = Assignment | Print
-  Assignment  = identifier "=" Exp ";"
-  Print       = "pradarshit" "(" Exp ")" ";"
-  Exp         = AddExp
-  AddExp      = AddExp "+" MulExp  -- plus
-              | AddExp "-" MulExp  -- minus
-              | MulExp
-  MulExp      = MulExp "*" PriExp  -- times
-              | MulExp "/" PriExp  -- divide
-              | PriExp
-  PriExp      = number             -- number
-              | identifier         -- ident
-              | "(" Exp ")"        -- parens
-  identifier  = letter (alnum)*
-  number      = digit+
-}`;
+    Hinglish {
+      Program     = Statement*
+      Statement   = Assignment | Print
+      Assignment  = Type identifier "=" Exp ";"
+      Print       = "pradarshit" "(" Exp ")" ";"
+      Exp         = AddExp
+      AddExp      = AddExp "+" MulExp  -- plus
+                  | AddExp "-" MulExp  -- minus
+                  | MulExp
+      MulExp      = MulExp "*" PriExp  -- times
+                  | MulExp "/" PriExp  -- divide
+                  | PriExp
+      PriExp      = number             -- number
+                  | identifier         -- ident
+                  | "(" Exp ")"        -- parens
+                  | string             -- string
+                  | "true"             -- true
+                  | "false"            -- false
+                  | "null"             -- null
+      Type        = "number" | "shabd" | "haanYaNaa" | "khaali" | "soochi" | "cheez"
+      identifier  = letter (alnum)*
+      number      = digit+
+      string      = "\\"" (~"\\"" any)* "\\""
+    }
+    `;
 
     const grammar = ohm.grammar(grammarText);
     const semantics = grammar.createSemantics();
@@ -219,9 +204,10 @@ Hinglish {
       Statement(s) {
         s.eval();
       },
-      Assignment(id, _, expr, __) {
+      Assignment(_type, id, _eq, expr, _semi) {
         const name = id.eval();
-        env[name] = expr.eval();
+        const value = expr.eval();
+        env[name] = value;
       },
       Print(_1, _2, expr, _3, _4) {
         const out = expr.eval();
@@ -237,30 +223,58 @@ Hinglish {
         return env[name];
       },
       PriExp_parens(_1, expr, _2) { return expr.eval(); },
+      PriExp_string(str) {
+        return str.sourceString.slice(1, -1);
+      },
+      PriExp_true(_) {
+        return true;
+      },
+      PriExp_false(_) {
+        return false;
+      },
+      PriExp_null(_) {
+        return null;
+      },
       identifier(_first, _rest) {
         return this.sourceString;
       }
     });
- const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-    lineNumbers: true,
-    mode: "highlish",
-    theme: "monokai",
 
-    matchBrackets: true
-  });
+    // Custom keywords
+    const hindiKeywords = ["number", "shabd", "haanYaNaa", "khaali", "soochi", "cheez", "pradarshit", "true", "false", "null"];
 
-  document.getElementById("runBtn").addEventListener("click", () => {
-    const code = editor.getValue();
-    document.getElementById("output").textContent = "";
-    Object.keys(env).forEach(k => delete env[k]);
-    const match = grammar.match(code);
-    if (match.failed()) {
-      document.getElementById("output").textContent = "❌ Error: " + match.message;
-      return;
-    }
-    semantics(match).eval();
-  });
+    CodeMirror.defineSimpleMode("hindiMode", {
+      start: [
+        {regex: new RegExp("\\b(" + hindiKeywords.join("|") + ")\\b"), token: "keyword-hindi"},
+        {regex: /\b([a-zA-Z_][a-zA-Z0-9_]*)\b/, token: "variable"},  // Tokenize variables
+        {regex: /"(?:[^\\"]|\\.)*"?/, token: "string"},
+        {regex: /\d+/, token: "number"},
+        {regex: /\/\/.*/, token: "comment"},
+        {regex: /[+\-*\/=(){};]+/, token: "operator"},
+      ]
+    });
 
+    const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+      mode: "hindiMode",
+      theme: "dracula",
+      lineNumbers: true,
+      tabSize: 2,
+    });
+
+    document.getElementById("runBtn").addEventListener("click", () => {
+      const code = editor.getValue();
+      document.getElementById("output").textContent = "";
+      try {
+        const matchResult = grammar.match(code);
+        if (matchResult.succeeded()) {
+          semantics(matchResult).eval();
+        } else {
+          document.getElementById("output").textContent = "🛑 Syntax Error!";
+        }
+      } catch (err) {
+        document.getElementById("output").textContent = "⚠️ Runtime Error: " + err.message;
+      }
+    });
   </script>
 </body>
 </html>
