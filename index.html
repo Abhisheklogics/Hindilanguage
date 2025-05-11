@@ -14,11 +14,7 @@
       --output-bg: #121212;
       --radius: 12px;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body, html {
       margin: 0;
       padding: 0;
@@ -28,7 +24,6 @@
       color: #ffffff;
       overflow: hidden;
     }
-
     header {
       background: #111;
       padding: 15px 25px;
@@ -37,7 +32,6 @@
       align-items: center;
       box-shadow: 0 2px 10px rgba(0, 255, 255, 0.1);
     }
-
     header h1 {
       margin: 0;
       color: var(--primary);
@@ -45,7 +39,6 @@
       text-transform: uppercase;
       letter-spacing: 1px;
     }
-
     #runBtn {
       background: var(--primary);
       color: white;
@@ -57,19 +50,16 @@
       transition: 0.3s ease;
       box-shadow: 0 0 10px var(--primary);
     }
-
     #runBtn:hover {
       background: var(--secondary);
       transform: translateY(-1px);
     }
-
     .container {
       display: flex;
       height: calc(100% - 60px);
       gap: 15px;
       padding: 20px;
     }
-
     .editor, .output {
       flex: 1;
       display: flex;
@@ -79,11 +69,7 @@
       overflow: hidden;
       box-shadow: 0 0 10px rgba(0, 255, 255, 0.05);
     }
-
-    .output {
-      background: var(--output-bg);
-    }
-
+    .output { background: var(--output-bg); }
     h3 {
       margin: 0;
       padding: 10px 15px;
@@ -92,7 +78,6 @@
       color: var(--primary);
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
-
     pre {
       flex: 1;
       padding: 20px;
@@ -103,29 +88,22 @@
       white-space: pre-wrap;
       animation: fadeIn 0.5s ease;
     }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(5px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
     @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-      }
+      .container { flex-direction: column; }
     }
-
     .CodeMirror {
       height: 100%;
       font-size: 15px;
       background-color: var(--editor-bg) !important;
     }
-
     .cm-keyword-hindi {
       color: #00e5ff !important;
       font-weight: bold;
     }
-
     .cm-variable, .cm-number, .cm-string, .cm-operator, .cm-comment, .cm-atom {
       color: white !important;
     }
@@ -133,37 +111,36 @@
 </head>
 <body>
 
-  <header>
-    <h1>Hindi Code Interpreter</h1>
-    <button id="runBtn">▶ Run Code</button>
-  </header>
+<header>
+  <h1>Hindi Code Interpreter</h1>
+  <button id="runBtn">▶ Run Code</button>
+</header>
 
-  <div class="container">
-    <div class="editor">
-      <textarea id="code">number umar = 21;
+<div class="container">
+  <div class="editor">
+    <textarea id="code">number agea = 21;
 shabd naam = "Abhishek Kumar";
 
-pradarshit(umar);
-pradarshit(naam);</textarea>
-    </div>
-    <div class="output">
-      <h3>Output</h3>
-      <pre id="output"></pre>
-    </div>
+dikhao(umar);
+dikhao(naam);</textarea>
   </div>
+  <div class="output">
+    <h3>Output</h3>
+    <pre id="output"></pre>
+  </div>
+</div>
 
-  <!-- CodeMirror & Ohm -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/mode/simple.min.js"></script>
-  <script src="https://unpkg.com/ohm-js@16.2.0/dist/ohm.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/mode/simple.min.js"></script>
+<script src="https://unpkg.com/ohm-js@16.2.0/dist/ohm.min.js"></script>
 
-  <script>
-    const grammarText = `
+<script>
+  const grammarText = `
     Hinglish {
       Program     = Statement*
       Statement   = Assignment | Print
       Assignment  = Type identifier "=" Exp ";"
-      Print       = "pradarshit" "(" Exp ")" ";"
+      Print       = "dikhao" "(" Exp ")" ";"
       Exp         = AddExp
       AddExp      = AddExp "+" MulExp  -- plus
                   | AddExp "-" MulExp  -- minus
@@ -183,83 +160,105 @@ pradarshit(naam);</textarea>
       number      = digit+
       string      = "\\"" (~"\\"" any)* "\\""
     }
-    `;
+  `;
 
-    const grammar = ohm.grammar(grammarText);
-    const semantics = grammar.createSemantics();
-    const env = {};
+  const grammar = ohm.grammar(grammarText);
+  const semantics = grammar.createSemantics();
+  const env = {};
+  const types = {};
 
-    semantics.addOperation("eval", {
-      Program(statements) {
-        statements.children.forEach(s => s.eval());
-      },
-      Statement(s) {
-        s.eval();
-      },
-      Assignment(_type, id, _eq, expr, _semi) {
-        const name = id.eval();
-        const value = expr.eval();
-        env[name] = value;
-      },
-      Print(_1, _2, expr, _3, _4) {
-        const out = expr.eval();
-        document.getElementById("output").textContent += out + "\n";
-      },
-      AddExp_plus(a, _, b) { return a.eval() + b.eval(); },
-      AddExp_minus(a, _, b) { return a.eval() - b.eval(); },
-      MulExp_times(a, _, b) { return a.eval() * b.eval(); },
-      MulExp_divide(a, _, b) { return a.eval() / b.eval(); },
-      PriExp_number(n) { return parseInt(n.sourceString, 10); },
-      PriExp_ident(id) {
-        const name = id.eval();
-        return env[name];
-      },
-      PriExp_parens(_1, expr, _2) { return expr.eval(); },
-      PriExp_string(str) {
-        return str.sourceString.slice(1, -1);
-      },
-      PriExp_true(_) { return true; },
-      PriExp_false(_) { return false; },
-      PriExp_null(_) { return null; },
-      identifier(_first, _rest) {
-        return this.sourceString;
+  function getType(val) {
+    if (typeof val === "number") return "number";
+    if (typeof val === "string") return "shabd";
+    if (typeof val === "boolean") return "haanYaNaa";
+    if (val === null) return "khaali";
+    if (Array.isArray(val)) return "soochi";
+    if (typeof val === "object") return "cheez";
+    return "unknown";
+  }
+
+  semantics.addOperation("eval", {
+    Program(statements) {
+      statements.children.forEach(s => s.eval());
+    },
+    Statement(s) {
+      s.eval();
+    },
+    Assignment(typeNode, id, _eq, expr, _semi) {
+      const declaredType = typeNode.sourceString;
+      const name = id.eval();
+      const value = expr.eval();
+      const actualType = getType(value);
+
+      if (declaredType !== actualType) {
+      console.log('err')
       }
-    });
 
-    const hindiKeywords = ["number", "shabd", "haanYaNaa", "khaali", "soochi", "cheez", "pradarshit", "true", "false", "null"];
+      env[name] = value;
+      types[name] = declaredType;
+    },
+    Print(_1, _2, expr, _3, _4) {
+      const out = expr.eval();
+      document.getElementById("output").textContent += out + "\n";
+    },
+    AddExp_plus(a, _, b) { return a.eval() + b.eval(); },
+    AddExp_minus(a, _, b) { return a.eval() - b.eval(); },
+    MulExp_times(a, _, b) { return a.eval() * b.eval(); },
+    MulExp_divide(a, _, b) { return a.eval() / b.eval(); },
+    PriExp_number(n) { return parseInt(n.sourceString, 10); },
+    PriExp_ident(id) {
+      const name = id.eval();
+      if (!(name in env)) console.log('err')
+      return env[name];
+    },
+    PriExp_parens(_1, expr, _2) { return expr.eval(); },
+    PriExp_string(str) {
+      return str.sourceString.slice(1, -1);
+    },
+    PriExp_true(_) { return true; },
+    PriExp_false(_) { return false; },
+    PriExp_null(_) { return null; },
+    identifier(_first, _rest) {
+      return this.sourceString;
+    }
+  });
 
-    CodeMirror.defineSimpleMode("hindiMode", {
-      start: [
-        {regex: new RegExp("\\b(" + hindiKeywords.join("|") + ")\\b"), token: "keyword-hindi"},
-        {regex: /\b([a-zA-Z_][a-zA-Z0-9_]*)\b/, token: "variable"},
-        {regex: /"(?:[^\\"]|\\.)*"?/, token: "string"},
-        {regex: /\d+/, token: "number"},
-        {regex: /\/\/.*/, token: "comment"},
-        {regex: /[+\-*\/=(){};]+/, token: "operator"},
-      ]
-    });
+  const hindiKeywords = ["number", "shabd", "haanYaNaa", "khaali", "soochi", "cheez", "dikhao", "true", "false", "null"];
 
-    const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-      mode: "hindiMode",
-      theme: "material-darker",
-      lineNumbers: true,
-      tabSize: 2
-    });
+  CodeMirror.defineSimpleMode("hindiMode", {
+    start: [
+      {regex: new RegExp("\\b(" + hindiKeywords.join("|") + ")\\b"), token: "keyword-hindi"},
+      {regex: /\b([a-zA-Z_][a-zA-Z0-9_]*)\b/, token: "variable"},
+      {regex: /"(?:[^\\"]|\\.)*"?/, token: "string"},
+      {regex: /\d+/, token: "number"},
+      {regex: /\/\/.*/, token: "comment"},
+      {regex: /[+\-*\/=(){};]+/, token: "operator"},
+    ]
+  });
 
-    document.getElementById("runBtn").addEventListener("click", () => {
-      const code = editor.getValue();
-      document.getElementById("output").textContent = "";
-      try {
-        const matchResult = grammar.match(code);
-        if (matchResult.succeeded()) {
-          semantics(matchResult).eval();
-        } else {
-          document.getElementById("output").textContent = "❌ Syntax Error!";
-        }
-      } catch (err) {
-        document.getElementById("output").textContent = "⚠️ Runtime Error: " + err.message;
+  const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+    mode: "hindiMode",
+    theme: "material-darker",
+    lineNumbers: true,
+    tabSize: 2
+  });
+
+  document.getElementById("runBtn").addEventListener("click", () => {
+    const code = editor.getValue();
+    document.getElementById("output").textContent = "";
+    try {
+      const matchResult = grammar.match(code);
+      if (matchResult.succeeded()) {
+        Object.keys(env).forEach(k => delete env[k]);
+        Object.keys(types).forEach(k => delete types[k]);
+        semantics(matchResult).eval();
+      } else {
+        document.getElementById("output").textContent = "❌ Syntax Error!";
       }
-    });
-  </script>
+    } catch (err) {
+      document.getElementById("output").textContent = "⚠️ Runtime Error: " + err.message;
+    }
+  });
+</script>
 </body>
 </html>
