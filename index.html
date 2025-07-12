@@ -49,6 +49,7 @@
       cursor: pointer;
       transition: 0.3s ease;
       box-shadow: 0 0 10px var(--primary);
+      margin-left: 600px;
     }
     #runBtn:hover {
       background: var(--secondary);
@@ -107,6 +108,17 @@
     .cm-variable, .cm-number, .cm-string, .cm-operator, .cm-comment, .cm-atom {
       color: white !important;
     }
+    #newdoc{
+        background: var(--primary);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s ease;
+    text-decoration-line: none;
+    }
   </style>
 </head>
 <body>
@@ -114,6 +126,7 @@
 <header>
   <h1>Hindi Code Interpreter</h1>
   <button id="runBtn">▶ Run Code</button>
+ <a href="doc.html" style="text-decoration: none; color: #fcf9f9; background-color: #80aef1; font-size: large;padding: 10px; border-radius: 10px;">Documentation</a>
 </header>
 
 <div class="container">

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hindi Programming Language – Documentation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --primary: #00bcd4;
+      --secondary: #03a9f4;
+      --bg: #0d0d0d;
+      --panel: #1e1e2f;
+      --text: #ffffff;
+      --muted: #bbbbbb;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0 24px;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+    header {
+      max-width: 920px;
+      margin: 56px auto 40px;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      margin: 0 0 8px;
+      color: var(--primary);
+      letter-spacing: 1px;
+    }
+    header p {
+      color: var(--muted);
+      margin: 0;
+    }
+    nav {
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      z-index: 5;
+    }
+    nav ul {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    nav li a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color .2s;
+      white-space: nowrap;
+    }
+    nav li a:hover {
+      color: var(--primary);
+    }
+    section {
+      max-width: 920px;
+      margin: 64px auto;
+      background: var(--panel);
+      padding: 32px;
+      border-radius: var(--radius);
+      box-shadow: 0 0 24px rgba(0,0,0,0.4);
+    }
+    section h2 {
+      margin-top: 0;
+      color: var(--secondary);
+    }
+    code, pre {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95rem;
+      background: #121212;
+      color: #ffdd57;
+      border-radius: 8px;
+      padding: 2px 6px;
+    }
+    pre {
+      display: block;
+      padding: 16px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    th, td {
+      padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    th { background: rgba(255,255,255,0.05); text-align: left; }
+    tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+    @media (max-width: 640px) {
+      section { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Hindi Programming Language</h1>
+    <p>Minimal statically‑typed language inspired by Hindi keywords, built for teaching programming fundamentals.</p>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#types">Types & Keywords</a></li>
+      <li><a href="#syntax">Basic Syntax</a></li>
+      <li><a href="#operators">Operators</a></li>
+      <li><a href="#examples">Code Examples</a></li>
+      <li><a href="#conditionals">Conditionals</a></li>
+      <li><a href="#datatypes">Data Types</a></li>
+    </ul>
+  </nav>
+
+  <section id="intro">
+    <h2>Introduction</h2>
+    <p>Hindi Lang aims to lower the barrier to entry for beginners by allowing them to write code using familiar Hindi‑based keywords while still respecting common programming structures. Programs are parsed with <em>ohm‑js</em> and executed directly in the browser.</p>
+  </section>
+
+  <section id="types">
+    <h2>Types & Keywords</h2>
+    <p>The language is statically typed. Declare a variable with its type, an identifier, and an initial value:</p>
+    <pre><code>number age = 21;
+shabd  naam = "Abhishek";</code></pre>
+    <table>
+      <thead>
+        <tr><th>Type</th><th>Keyword</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Number</td><td><code>number</code></td><td>Signed 32‑bit integer.</td></tr>
+        <tr><td>String</td><td><code>shabd</code></td><td>UTF‑16 text.</td></tr>
+        <tr><td>Boolean</td><td><code>haanYaNaa</code></td><td><code>true</code> / <code>false</code></td></tr>
+        <tr><td>Null</td><td><code>khaali</code></td><td>Explicit empty value.</td></tr>
+        <tr><td>Array</td><td><code>soochi</code></td><td>Ordered collection.</td></tr>
+        <tr><td>Object</td><td><code>cheez</code></td><td>Key–value map.</td></tr>
+      </tbody>
+    </table>
+    <p>Print values to the output panel with <code>dikhao(expr);</code>.</p>
+  </section>
+
+  <section id="syntax">
+    <h2>Basic Syntax</h2>
+    <ul>
+      <li>Each statement ends with a semicolon <code>;</code>.</li>
+      <li>Single‑line comments start with <code>//</code>.</li>
+      <li>Identifiers follow the pattern <em>letter&nbsp;[letter | digit]*</em>.</li>
+      <li>All code lives at the top level—no functions yet (road‑map).</li>
+    </ul>
+  </section>
+
+  <section id="operators">
+    <h2>Operators</h2>
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Symbol</th><th>Example</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Addition</td><td><code>+</code></td><td><code>a + b</code></td></tr>
+        <tr><td>Subtraction</td><td><code>-</code></td><td><code>a - b</code></td></tr>
+        <tr><td>Multiplication</td><td><code>*</code></td><td><code>a * b</code></td></tr>
+        <tr><td>Division</td><td><code>/</code></td><td><code>a / b</code></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="examples">
+    <h2>Code Examples</h2>
+    <h3>Print your name</h3>
+    <pre><code>shabd naam = "Sita";
+dikhao(naam);</code></pre>
+
+    <h3>Simple arithmetic</h3>
+    <pre><code>number x = 4;
+number y = 5;
+number sum = x + y;
+dikhao(sum);</code></pre>
+
+    <h3>Booleans & null</h3>
+    <pre><code>haanYaNaa flag = true;
+khaali kuch = null;
+dikhao(flag);
+dikhao(kuch);</code></pre>
+  </section>
+
+  <section id="conditionals">
+    <h2>Conditional Statements</h2>
+    <p>The <code>agar</code> keyword is used for conditional logic similar to <code>if</code> in other languages. Use <code>warna</code> for else:</p>
+    <pre><code>number score = 80;
+
+agar (score > 50) {
+  dikhao("Pass");
+} warna {
+  dikhao("Fail");
+}</code></pre>
+    <p>Curly braces are used to define blocks of code for each branch.</p>
+  </section>
+
+  <section id="datatypes">
+    <h2>Extended Data Types</h2>
+    <p>Examples of how to use arrays and objects in Hindi Lang:</p>
+
+    <h3>Array (soochi)</h3>
+    <pre><code>soochi numbers = [1, 2, 3];
+dikhao(numbers);</code></pre>
+
+    <h3>Object (cheez)</h3>
+    <pre><code>cheez student = {
+  naam: "Abhishek",
+  umra: 20
+};
+dikhao(student);</code></pre>
+  </section>
+
+  <footer style="text-align:center; color:var(--muted); margin:96px 0 48px;">
+    Last updated July 12, 2025
+  </footer>
+</body>
+</html>
